@@ -13,13 +13,11 @@ RUN cat /app/config.php.sample |\
     sed -e "s/'database_password'/NULL/g" |\
     sed -e "s/database_name/quincydb/g" > /app/config.php
 
-RUN cat /run.sh | sed -e "s/-n/#-n/" > /runbg.sh && \
-    echo "" >> /runbg.sh && \
-    chmod u+x /runbg.sh
+ADD createdb.sh /createdb.sh
 
-RUN /runbg.sh && sleep 20 && \
-    mysql -e 'create database quincydb' && \
-    mysql quincydb < /app/database_schema.sql
+RUN mv /run.sh /run.sh.bak
+RUN cat /run.sh.bak | sed -e "s/create_mysql_admin_user.sh/create_mysql_admin_user.sh \\&\\& \\/createdb.sh/g" > /run.sh
+RUN chmod u+x /run.sh && chmod u+x /createdb.sh
 
 RUN apt-get update -y
 RUN apt-get install -y php5-curl
