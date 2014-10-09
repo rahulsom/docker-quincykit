@@ -17,7 +17,7 @@ RUN cat /run.sh | sed -e "s/-n/#-n/" > /runbg.sh && \
     echo "" >> /runbg.sh && \
     chmod u+x /runbg.sh
 
-RUN /runbg.sh && \
+RUN /runbg.sh && sleep 20 && \
     mysql -e 'create database quincydb' && \
     mysql quincydb < /app/database_schema.sql
 
